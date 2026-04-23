@@ -1,0 +1,30 @@
+home:
+  label: "charging_dock"
+  frame_id: "map"
+  x: 0.073
+  y: -2.492
+  yaw: 0.318
+
+  tolerance_xy: 0.25
+  tolerance_yaw: 0.25
+  notes: "idle / charging-dock pose"
+
+blue:
+  label: "blue_bin"
+  frame_id: "map"
+  x: 3.985
+  y: 2.522
+  yaw: 1.938
+  tolerance_xy: 0.25
+  tolerance_yaw: 0.25
+  notes: "stopping pose in front of the blue trash bin"
+
+black:
+  label: "black_bin"
+  frame_id: "map"
+  x: 4.530
+  y: 2.886
+  yaw: 1.910
+  tolerance_xy: 0.25
+  tolerance_yaw: 0.25
+  notes: "stopping pose in front of the black trash bin"
