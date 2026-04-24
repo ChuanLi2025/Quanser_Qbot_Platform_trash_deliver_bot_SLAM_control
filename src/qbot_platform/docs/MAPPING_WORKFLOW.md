@@ -39,3 +39,5 @@ Later, the command node will map text commands to saved poses:
 - `"home"` or idle completion -> navigate back to `home`
 
 Obstacle avoidance should remain inside Nav2 using the existing local/global costmaps driven by `/scan`.
+
+For runtime calibration and localization debugging, use `docs/NAV2_CALIBRATION.md`.

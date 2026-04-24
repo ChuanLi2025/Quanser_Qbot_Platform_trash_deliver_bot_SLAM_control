@@ -266,7 +266,14 @@ would not be sent on the /scan message.";
                 msgs.header.stamp = currentScanTime;
                 msgs.angle_min = measurements[0].heading;
                 msgs.angle_max = measurements[result - 1].heading;
-                msgs.angle_increment = msgs.angle_max / result;
+                if (result > 1)
+                {
+                    msgs.angle_increment = (msgs.angle_max - msgs.angle_min) / (result - 1);
+                }
+                else
+                {
+                    msgs.angle_increment = 0.0;
+                }
                 msgs.time_increment = (1.0 / publish_rate) / result;
                 msgs.scan_time = currentScanTime.seconds() - previousScanTime.seconds();
 

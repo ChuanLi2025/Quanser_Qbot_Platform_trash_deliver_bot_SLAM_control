@@ -97,6 +97,8 @@ install(DIRECTORY launch
 # Install Python mission node scripts
 install(PROGRAMS
   scripts/blue_route_demo.py
+  scripts/blue_roundtrip_nav_node.py
+  scripts/calibration_motion_runner.py
   scripts/publish_home_initial_pose.py
   scripts/trash_mission_node.py
   scripts/trash_mission_test_node.py

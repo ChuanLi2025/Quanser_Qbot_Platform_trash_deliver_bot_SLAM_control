@@ -34,6 +34,11 @@ def generate_launch_description():
         executable="wheel_odometry.py",
         name="wheel_odometry",
         output="screen",
+        parameters=[
+            {
+                "imu_angular_velocity_scale": 0.970,
+            }
+        ],
     )
 
     localization_launch = IncludeLaunchDescription(
