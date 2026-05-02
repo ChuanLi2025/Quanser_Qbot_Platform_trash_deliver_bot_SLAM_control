@@ -99,9 +99,13 @@ install(PROGRAMS
   scripts/blue_route_demo.py
   scripts/blue_roundtrip_nav_node.py
   scripts/calibration_motion_runner.py
+  scripts/navigate_to_target_node.py
+  scripts/openrouter_camera_stream.py
   scripts/publish_home_initial_pose.py
+  scripts/roundtrip_to_target_node.py
   scripts/trash_mission_node.py
   scripts/trash_mission_test_node.py
+  scripts/vision_forward_agent.py
   scripts/wheel_odometry.py
   DESTINATION lib/${PROJECT_NAME}
 )

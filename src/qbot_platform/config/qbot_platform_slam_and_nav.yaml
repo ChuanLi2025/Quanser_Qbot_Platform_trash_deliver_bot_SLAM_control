@@ -30,7 +30,10 @@ amcl:
     robot_model_type: "nav2_amcl::DifferentialMotionModel"
     save_pose_rate: 0.5
     scan_topic: /scan
-    set_initial_pose: false
+    #set_initial_pose: false
+    set_initial_pose: true
+    initial_pose: [0.073, -2.492, 0.0, 0.318]
+
     sigma_hit: 0.2
     tf_broadcast: true
     transform_tolerance: 1.0
@@ -157,13 +160,13 @@ controller_server:
       time_steps: 75
       model_dt: 0.1
       batch_size: 100
-      vx_std: 0.2
+      vx_std: 0.25
       vy_std: 0.0
-      wz_std: 0.4
-      vx_max: 0.175
+      wz_std: 0.6
+      vx_max: 0.25
       vx_min: 0.0
       vy_max: 0.0
-      wz_max: 0.2
+      wz_max: 0.45
       iteration_count: 1
       prune_distance: 7.5
       transform_tolerance: 0.1
@@ -246,7 +249,8 @@ local_costmap:
       inflation_layer:
         plugin: "nav2_costmap_2d::InflationLayer"
         cost_scaling_factor: 3.0
-        inflation_radius: 0.1
+        #inflation_radius: 0.1
+        inflation_radius: 0.4
       voxel_layer:
         plugin: "nav2_costmap_2d::VoxelLayer"
         enabled: True
@@ -303,8 +307,10 @@ global_costmap:
         map_subscribe_transient_local: True
       inflation_layer:
         plugin: "nav2_costmap_2d::InflationLayer"
-        cost_scaling_factor: 1.0
-        inflation_radius: 0.1
+        # cost_scaling_factor: 1.0
+        # inflation_radius: 0.1
+        cost_scaling_factor: 3.0
+        inflation_radius: 0.6
       always_send_full_costmap: True
 
 map_saver:
@@ -383,10 +389,10 @@ velocity_smoother:
     smoothing_frequency: 20.0
     scale_velocities: false
     feedback: "OPEN_LOOP"
-    max_velocity: [0.18, 0.0, 0.8]
-    min_velocity: [0.0, 0.0, -0.8]
-    max_accel: [0.5, 0.0, 1.5]
-    max_decel: [-0.5, 0.0, -1.5]
+    max_velocity: [0.25, 0.0, 1.0]
+    min_velocity: [0.0, 0.0, -1.0]
+    max_accel: [0.7, 0.0, 2.0]
+    max_decel: [-0.7, 0.0, -2.0]
     odom_topic: "odom"
     odom_duration: 0.1
     deadband_velocity: [0.0, 0.0, 0.0]

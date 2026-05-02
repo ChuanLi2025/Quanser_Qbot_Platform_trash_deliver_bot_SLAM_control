@@ -37,6 +37,7 @@ def generate_launch_description():
         parameters=[
             {
                 "imu_angular_velocity_scale": 0.970,
+                "use_imu_yaw": False,
             }
         ],
     )

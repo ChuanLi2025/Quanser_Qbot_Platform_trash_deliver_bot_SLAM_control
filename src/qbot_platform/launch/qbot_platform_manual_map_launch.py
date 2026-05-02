@@ -75,7 +75,7 @@ def generate_launch_description():
             package='qbot_platform',
             executable='qbot_platform_driver_interface',
             name='QBotPlatformDriver',
-            parameters=[{'arm_robot': True}],
+            parameters=[{'arm_robot': True, 'speed_limit_mode': 1}],
         )
 
     configuration_basename_la = DeclareLaunchArgument(

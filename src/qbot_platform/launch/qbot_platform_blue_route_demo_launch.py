@@ -17,7 +17,8 @@ def generate_launch_description():
             IncludeLaunchDescription(PythonLaunchDescriptionSource(base_launch)),
             Node(
                 package="qbot_platform",
-                executable="blue_route_demo.py",
+                #executable="blue_route_demo.py",
+                executable="blue_route_demo",
                 name="blue_route_demo",
                 output="screen",
                 parameters=[

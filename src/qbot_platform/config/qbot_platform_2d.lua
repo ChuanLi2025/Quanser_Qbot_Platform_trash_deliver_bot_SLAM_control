@@ -10,7 +10,7 @@ options = {
   odom_frame = "odom",
   provide_odom_frame = true,
   publish_frame_projected_to_2d = false,
-  use_odometry = false,
+  use_odometry = true,
   use_nav_sat = false,
   use_landmarks = false,
   num_laser_scans = 1,
@@ -41,7 +41,7 @@ TRAJECTORY_BUILDER_2D.num_accumulated_range_data = 1
 TRAJECTORY_BUILDER_2D.adaptive_voxel_filter.max_range = 6
 TRAJECTORY_BUILDER_2D.loop_closure_adaptive_voxel_filter.max_range = 6
 
-TRAJECTORY_BUILDER_2D.submaps.num_range_data = 1
+TRAJECTORY_BUILDER_2D.submaps.num_range_data = 60
 
 TRAJECTORY_BUILDER_2D.ceres_scan_matcher.occupied_space_weight = 1
 TRAJECTORY_BUILDER_2D.ceres_scan_matcher.ceres_solver_options.num_threads = 1
@@ -56,7 +56,7 @@ TRAJECTORY_BUILDER_2D.real_time_correlative_scan_matcher.translation_delta_cost_
 TRAJECTORY_BUILDER_2D.real_time_correlative_scan_matcher.rotation_delta_cost_weight = 1e-1
 
 
-POSE_GRAPH.optimize_every_n_nodes = 0
+POSE_GRAPH.optimize_every_n_nodes = 30
 POSE_GRAPH.constraint_builder.min_score = 0.65
 POSE_GRAPH.constraint_builder.log_matches = false
 POSE_GRAPH.constraint_builder.fast_correlative_scan_matcher.linear_search_window = 15.0

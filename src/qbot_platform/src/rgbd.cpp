@@ -238,9 +238,15 @@ int main(int argc, char ** argv)
                                 RCLCPP_ERROR(node->get_logger(), "Error getting frame from rgb stream: %d -> %s", result, error_message);
                             }
 
-                            // Try to send the same frame as last time
-                            msg = cv_bridge::CvImage(hdr, sensor_msgs::image_encodings::BGR8, color_matrix).toImageMsg();
-                            color_pub.publish(msg);
+                            // Try to send the same frame as last time, but only
+                            // after a valid frame has been captured.
+                            if (!color_matrix.empty())
+                            {
+                                msg = cv_bridge::CvImage(hdr, sensor_msgs::image_encodings::BGR8, color_matrix).toImageMsg();
+                                msg->header.stamp = node->get_clock()->now();
+                                msg->header.frame_id = "color_image";
+                                color_pub.publish(msg);
+                            }
                         }
 
                         // Depth stream
@@ -277,9 +283,15 @@ int main(int argc, char ** argv)
                                 RCLCPP_ERROR(node->get_logger(), "Error getting frame from depth stream: %d -> %s", result, error_message);
                             }
 
-                            // Try to send the same frame as last time
-                            msg = cv_bridge::CvImage(hdr, sensor_msgs::image_encodings::MONO16, depth_matrix).toImageMsg();
-                            depth_pub.publish(msg);
+                            // Try to send the same frame as last time, but only
+                            // after a valid frame has been captured.
+                            if (!depth_matrix.empty())
+                            {
+                                msg = cv_bridge::CvImage(hdr, sensor_msgs::image_encodings::MONO16, depth_matrix).toImageMsg();
+                                msg->header.stamp = node->get_clock()->now();
+                                msg->header.frame_id = "depth_image";
+                                depth_pub.publish(msg);
+                            }
                         }
 
                         try

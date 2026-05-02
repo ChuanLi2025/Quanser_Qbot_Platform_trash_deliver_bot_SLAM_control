@@ -1,0 +1,29 @@
+home:
+  label: "charging_dock"
+  frame_id: "map"
+  x: -0.016
+  y: -0.011
+  yaw: -0.022
+  tolerance_xy: 0.25
+  tolerance_yaw: 0.25
+  notes: "stable home pose on lab_map_v5"
+
+blue:
+  label: "blue_bin"
+  frame_id: "map"
+  x: 5.702
+  y: 3.254
+  yaw: 1.504
+  tolerance_xy: 0.25
+  tolerance_yaw: 0.25
+  notes: "blue target on lab_map_v5"
+
+black:
+  label: "black_bin"
+  frame_id: "map"
+  x: 6.264
+  y: 3.194
+  yaw: 1.259
+  tolerance_xy: 0.25
+  tolerance_yaw: 0.25
+  notes: "black target on lab_map_v5"
