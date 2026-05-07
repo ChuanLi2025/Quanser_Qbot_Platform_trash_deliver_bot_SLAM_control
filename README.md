@@ -53,12 +53,68 @@ manual map-recording entry point. Its runtime chain is:
   for reverse.
 - `lidar` publishes `/scan`, while `fixed_lidar_frame` publishes the fixed
   transform from `base_link` to the lidar frame.
-- `wheel_odometry.py` integrates wheel encoder/joint feedback and IMU yaw-rate
-  information into `/odom` and the `odom -> base_link` transform.
+- `wheel_odometry.py` integrates wheel encoder/joint feedback into `/odom` and
+  the `odom -> base_link` transform. For manual map recording it intentionally
+  uses `use_imu_yaw:=false`, because the successful recording workflow was more
+  stable when yaw came from the wheel encoder difference instead of IMU yaw-rate
+  integration. The driver still publishes `/qbot_imu` for checking and tuning.
 - `cartographer_node` uses `config/qbot_platform_2d.lua` to combine the laser
   scan, TF, and odometry into the SLAM pose estimate and map.
 - `cartographer_occupancy_grid_node` publishes the occupancy-grid map that can
   be viewed and saved.
+
+The current manual mapping launch already starts `wheel_odometry.py`, so do not
+start a second copy in another terminal. The old helper command below is only
+for older launch files that do not start wheel odometry themselves:
+
+```bash
+ros2 run qbot_platform wheel_odometry.py --ros-args -p use_imu_yaw:=false
+```
+
+Useful calibration checks while recording a map:
+
+```bash
+ros2 topic echo /odom --once
+ros2 topic hz /odom
+```
+
+To compare whether the robot returns to the same map pose across repeated
+placements, print the live `map -> base_link` transform:
+
+```bash
+python3 - <<'PY'
+import math
+import rclpy
+from rclpy.node import Node
+from tf2_ros import Buffer, TransformListener
+
+def yaw_from_quat(q):
+    siny_cosp = 2.0 * (q.w * q.z + q.x * q.y)
+    cosy_cosp = 1.0 - 2.0 * (q.y * q.y + q.z * q.z)
+    return math.atan2(siny_cosp, cosy_cosp)
+
+class PosePrinter(Node):
+    def __init__(self):
+        super().__init__("print_map_pose")
+        self.buffer = Buffer()
+        self.listener = TransformListener(self.buffer, self)
+        self.timer = self.create_timer(1.0, self.print_pose)
+
+    def print_pose(self):
+        try:
+            tf = self.buffer.lookup_transform("map", "base_link", rclpy.time.Time())
+            t = tf.transform.translation
+            q = tf.transform.rotation
+            yaw = yaw_from_quat(q)
+            print(f"x: {t.x:.3f}, y: {t.y:.3f}, yaw: {yaw:.3f}")
+        except Exception as e:
+            print(f"waiting for map -> base_link: {e}")
+
+rclpy.init()
+node = PosePrinter()
+rclpy.spin(node)
+PY
+```
 
 `src/qbot_platform/launch/qbot_platform_cartographer_launch.py` is a more
 modular Cartographer launch. It includes the standard `qbot_platform_launch.py`

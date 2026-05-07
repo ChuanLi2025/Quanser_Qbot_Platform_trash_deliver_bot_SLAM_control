@@ -85,7 +85,7 @@ def generate_launch_description():
             output='screen',
             parameters=[{
                 'imu_angular_velocity_scale': 0.970,
-                'use_imu_yaw': True,
+                'use_imu_yaw': False,
             }],
         )
 
