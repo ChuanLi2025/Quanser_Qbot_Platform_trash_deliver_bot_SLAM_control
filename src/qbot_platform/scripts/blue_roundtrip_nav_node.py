@@ -12,6 +12,14 @@ from nav2_msgs.action import NavigateToPose
 from rclpy.action import ActionClient
 from rclpy.node import Node
 from std_msgs.msg import String
+from std_msgs.msg import ColorRGBA
+
+# 导入 LED 控制器
+import sys
+import os
+script_dir = os.path.dirname(os.path.abspath(__file__))
+sys.path.insert(0, script_dir)
+from led_controller import LEDController
 
 
 def yaw_to_quaternion(yaw: float):
@@ -50,11 +58,16 @@ class BlueRoundtripNavNode(Node):
         self.nav_client = ActionClient(self, NavigateToPose, "navigate_to_pose")
         self.status_pub = self.create_publisher(String, self.status_topic, 10)
         self.dump_pub = self.create_publisher(String, self.dump_command_topic, 10)
+        
+        # 初始化 LED 控制器
+        self.led = LEDController(self, led_topic="/qbot_led_strip")
 
         self._phase = "startup_wait"
         self._active_goal_name = None
         self._wait_timer = self.create_timer(self.startup_delay_sec, self._start_sequence)
 
+        # 启动时设置黄色灯光
+        self.led.yellow()
         self._publish_status("roundtrip_waiting_to_start")
         self.get_logger().info("Blue roundtrip nav node ready")
 
@@ -87,11 +100,13 @@ class BlueRoundtripNavNode(Node):
             self._wait_timer.cancel()
             self._wait_timer = None
         self._phase = "go_to_blue"
+        self.led.blue()  # 设置蓝色灯光 - 去垃圾桶
         self._publish_status("roundtrip_navigating_to_blue")
         self._send_named_goal(self.blue_name)
 
     def _send_named_goal(self, target_name: str, yaw_override: float = None):
         if not self.nav_client.wait_for_server(timeout_sec=5.0):
+            self.led.red()
             self._publish_status("roundtrip_error_no_nav_server")
             self.get_logger().error("NavigateToPose action server is not available")
             return
@@ -121,6 +136,7 @@ class BlueRoundtripNavNode(Node):
     def _goal_response_cb(self, future):
         goal_handle = future.result()
         if not goal_handle.accepted:
+            self.led.red()
             self._publish_status(f"roundtrip_goal_rejected_{self._phase}")
             self.get_logger().error(f"Goal rejected during phase {self._phase}")
             return
@@ -132,6 +148,7 @@ class BlueRoundtripNavNode(Node):
         result = future.result()
         status = result.status
         if status != GoalStatus.STATUS_SUCCEEDED:
+            self.led.red()
             self._publish_status(f"roundtrip_navigation_failed_{self._phase}_{status}")
             self.get_logger().warning(
                 f"Navigation failed during phase {self._phase} with status {status}"
@@ -141,6 +158,7 @@ class BlueRoundtripNavNode(Node):
         if self._phase == "go_to_blue":
             self._publish_status("roundtrip_arrived_blue")
             self._publish_dump_command(self.blue_name)
+            self.led.blue_flash()
             self._phase = "turnaround_wait"
             self._wait_timer = self.create_timer(self.post_blue_wait_sec, self._start_turnaround)
             return
@@ -148,12 +166,14 @@ class BlueRoundtripNavNode(Node):
         if self._phase == "turnaround":
             self._publish_status("roundtrip_turned_around")
             self._phase = "return_home"
+            self.led.blue()
             self._publish_status("roundtrip_returning_home")
             self._send_named_goal(self.home_name)
             return
 
         if self._phase == "return_home":
             self._publish_status("roundtrip_arrived_home")
+            self.led.yellow()
             return
 
     def _start_turnaround(self):
@@ -166,6 +186,7 @@ class BlueRoundtripNavNode(Node):
             float(blue_target["yaw"]) + math.radians(self.turnaround_degrees)
         )
         self._phase = "turnaround"
+        self.led.blue()
         self._publish_status("roundtrip_turning_180_at_blue")
         self._send_named_goal(self.blue_name, yaw_override=turnaround_yaw)
 

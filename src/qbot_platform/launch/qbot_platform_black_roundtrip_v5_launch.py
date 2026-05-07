@@ -7,6 +7,7 @@ from launch.actions import IncludeLaunchDescription, TimerAction
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch_ros.actions import Node
 
+
 def generate_launch_description():
     package_dir = get_package_share_directory("qbot_platform")
     bringup_launch = os.path.join(package_dir, "launch", "qbot_platform_map_nav_bringup_launch.py")
@@ -25,7 +26,7 @@ def generate_launch_description():
                 Node(
                     package="qbot_platform",
                     executable="publish_home_initial_pose.py",
-                    name="publish_home_initial_pose_v5_roundtrip",
+                    name="publish_home_initial_pose_v5_black_roundtrip",
                     output="screen",
                     parameters=[{
                         "targets_file": targets_file,
@@ -43,12 +44,12 @@ def generate_launch_description():
                 Node(
                     package="qbot_platform",
                     executable="roundtrip_to_target_node.py",
-                    name="blue_roundtrip_v5",
+                    name="black_roundtrip_v5",
                     output="screen",
                     parameters=[{
                         "targets_file": targets_file,
                         "home_name": "home",
-                        "target_name": "blue",
+                        "target_name": "black",
                         "startup_delay_sec": 1.0,
                         "wait_at_target_sec": 10.0,
                         "post_turn_settle_sec": 2.5,
@@ -58,9 +59,9 @@ def generate_launch_description():
                         "status_topic": "/trash_mission_status",
                         "led_topic": "/qbot_led_strip",
                         "wait_flash_hz": 2.0,
-                        "task_led_r": 0.0,
+                        "task_led_r": 0.35,
                         "task_led_g": 0.0,
-                        "task_led_b": 1.0,
+                        "task_led_b": 0.75,
                     }],
                 )
             ],

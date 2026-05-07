@@ -99,6 +99,7 @@ install(PROGRAMS
   scripts/blue_route_demo.py
   scripts/blue_roundtrip_nav_node.py
   scripts/calibration_motion_runner.py
+  scripts/led_controller.py
   scripts/navigate_to_target_node.py
   scripts/openrouter_camera_stream.py
   scripts/publish_home_initial_pose.py
