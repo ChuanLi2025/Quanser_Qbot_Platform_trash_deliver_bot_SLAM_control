@@ -34,8 +34,13 @@ ament_target_dependencies(lidar rclcpp sensor_msgs)
 add_executable(fixed_lidar_frame src/fixed_lidar_frame.cpp)
 ament_target_dependencies(fixed_lidar_frame geometry_msgs rclcpp tf2 tf2_ros)
 
+add_executable(command src/command.cpp)
+target_link_libraries(command -lquanser_devices -lquanser_communications -lquanser_runtime -lquanser_common)
+ament_target_dependencies(command geometry_msgs rclcpp)
+
 install(
   TARGETS
+    command
     fixed_lidar_frame
     lidar
     qbot_platform_driver_interface
