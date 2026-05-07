@@ -1,5 +1,13 @@
-# Trash-Delivery-Qbot
-github repository for Dr Kubota's ENGR 857 Final Project, authored by: Anthony Delacruz, Chuan Li, Lorenz Falcioni
+# Quanser QBot Platform Trash Delivery SLAM Control
+
+This repository contains my ROS 2 Humble implementation for a Quanser QBot
+Platform trash-delivery robot. The project covers physical robot bringup,
+manual SLAM map recording, wheel-odometry calibration, Nav2 map-based
+navigation, obstacle-aware roundtrip behavior, and LED task-state feedback.
+
+The current `main` branch is intentionally focused on the robot-side code used
+for the final working demo: recording the lab map, localizing on that map, and
+running blue-bin or black-bin roundtrip delivery tasks.
 
 ## Demo Mainline
 
@@ -30,8 +38,12 @@ Both launch files use `scripts/roundtrip_to_target_node.py` with:
 
 ## Mapping Workflow
 
-The mapping/demo-support workflow is also kept on `main` so the project can show
-how the lab map was recorded:
+The final lab map was recorded with a terminal-first workflow rather than an
+RViz2-driven workflow. RViz2 was not required for the successful map-recording
+pass; instead, I used direct ROS topic and TF checks to verify whether the robot
+pose stayed consistent when it returned to the same physical location.
+
+The main entry point for recording the map is:
 
 ```bash
 source /opt/ros/humble/setup.bash
@@ -63,6 +75,19 @@ manual map-recording entry point. Its runtime chain is:
 - `cartographer_occupancy_grid_node` publishes the occupancy-grid map that can
   be viewed and saved.
 
+The most important practical calibration detail was disabling IMU yaw
+integration during manual mapping. Earlier runs were less stable when yaw was
+estimated by integrating IMU angular velocity. The final good-quality map came
+from the workflow where `wheel_odometry.py` used encoder-based yaw instead:
+
+```bash
+use_imu_yaw:=false
+```
+
+That made repeated passes through the same area line up more consistently in the
+Cartographer map. The IMU data was still available on `/qbot_imu`, but it was
+not used as the primary yaw source for the manual mapping odometry.
+
 The current manual mapping launch already starts `wheel_odometry.py`, so do not
 start a second copy in another terminal. The old helper command below is only
 for older launch files that do not start wheel odometry themselves:
@@ -79,7 +104,9 @@ ros2 topic hz /odom
 ```
 
 To compare whether the robot returns to the same map pose across repeated
-placements, print the live `map -> base_link` transform:
+placements, I printed the live `map -> base_link` transform in a separate
+terminal. This gave a direct numeric check that the same real-world location was
+mapping to approximately the same `x`, `y`, and `yaw` values:
 
 ```bash
 python3 - <<'PY'
