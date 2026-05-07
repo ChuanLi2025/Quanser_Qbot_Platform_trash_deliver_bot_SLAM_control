@@ -42,18 +42,6 @@ def generate_launch_description():
             name='Lidar'
         )
 
-    realsense_camera_node = Node(
-            package='qbot_platform',
-            executable='rgbd',
-            name='RealsenseCamera'
-        )
-
-    downward_facing_camera_node = Node(
-            package='qbot_platform',
-            executable='csi',
-            name='DownwardFacingCamera'
-        )
-
     qbot_platform_driver_node = Node(
             package='qbot_platform',
             executable='qbot_platform_driver_interface',
