@@ -1,5 +1,5 @@
-# This is the launch file that starts up the basic QBot Platform nodes,
-# plus the TF node. Then start the cartographer.
+# One-command manual mapping launch: start the physical QBot driver, joystick
+# control, lidar, odometry, and Cartographer.
 
 import os
 import subprocess
@@ -78,6 +78,17 @@ def generate_launch_description():
             parameters=[{'arm_robot': True, 'speed_limit_mode': 1}],
         )
 
+    wheel_odom_node = Node(
+            package='qbot_platform',
+            executable='wheel_odometry.py',
+            name='wheel_odometry',
+            output='screen',
+            parameters=[{
+                'imu_angular_velocity_scale': 0.970,
+                'use_imu_yaw': True,
+            }],
+        )
+
     configuration_basename_la = DeclareLaunchArgument(
             'configuration_basename',
             default_value='qbot_platform_2d.lua',
@@ -121,6 +132,7 @@ def generate_launch_description():
         cartographer_node,
         cartographer_occupancy_grid_node,
         lidar_node,
+        wheel_odom_node,
         joystick_command_node,
                 RegisterEventHandler(
             OnProcessExit(
